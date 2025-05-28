@@ -1,0 +1,394 @@
+/**
+ * Wirdak - Islamic Dhikr Habit Tracking App
+ * themes.css - Light and dark theme support
+ */
+
+/* Light Theme (Default) */
+:root,
+.light-theme {
+  /* Primary Colors */
+  --primary-color: #10B981;
+  --primary-dark: #059669;
+  --primary-light: #D1FAE5;
+  
+  /* Secondary Colors */
+  --secondary-color: #F59E0B;
+  --secondary-dark: #D97706;
+  --secondary-light: #FEF3C7;
+  
+  /* Neutral Colors */
+  --neutral-50: #F8FAFC;
+  --neutral-100: #F1F5F9;
+  --neutral-200: #E2E8F0;
+  --neutral-300: #CBD5E1;
+  --neutral-400: #94A3B8;
+  --neutral-500: #64748B;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1E293B;
+  --neutral-900: #0F172A;
+  
+  /* Semantic Colors */
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --error-color: #EF4444;
+  --info-color: #3B82F6;
+  
+  /* Background Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-tertiary: #F1F5F9;
+  
+  /* Text Colors */
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-tertiary: #64748B;
+  --text-inverted: #FFFFFF;
+  
+  /* Border Colors */
+  --border-light: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-dark: #94A3B8;
+  
+  /* Shadow Colors */
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color-darker: rgba(0, 0, 0, 0.2);
+}
+
+/* Dark Theme */
+.dark-theme {
+  /* Primary Colors - Slightly adjusted for dark mode */
+  --primary-color: #34D399;
+  --primary-dark: #10B981;
+  --primary-light: #064E3B;
+  
+  /* Secondary Colors - Slightly adjusted for dark mode */
+  --secondary-color: #FBBF24;
+  --secondary-dark: #F59E0B;
+  --secondary-light: #78350F;
+  
+  /* Neutral Colors - Inverted for dark mode */
+  --neutral-50: #0F172A;
+  --neutral-100: #1E293B;
+  --neutral-200: #334155;
+  --neutral-300: #475569;
+  --neutral-400: #64748B;
+  --neutral-500: #94A3B8;
+  --neutral-600: #CBD5E1;
+  --neutral-700: #E2E8F0;
+  --neutral-800: #F1F5F9;
+  --neutral-900: #F8FAFC;
+  
+  /* Semantic Colors - Adjusted for dark mode */
+  --success-color: #34D399;
+  --warning-color: #FBBF24;
+  --error-color: #F87171;
+  --info-color: #60A5FA;
+  
+  /* Background Colors */
+  --bg-primary: #0F172A;
+  --bg-secondary: #1E293B;
+  --bg-tertiary: #334155;
+  
+  /* Text Colors */
+  --text-primary: #F8FAFC;
+  --text-secondary: #E2E8F0;
+  --text-tertiary: #CBD5E1;
+  --text-inverted: #0F172A;
+  
+  /* Border Colors */
+  --border-light: #334155;
+  --border-medium: #475569;
+  --border-dark: #64748B;
+  
+  /* Shadow Colors */
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --shadow-color-darker: rgba(0, 0, 0, 0.7);
+}
+
+/* Apply Theme Variables to Elements */
+
+/* Base Elements */
+body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+p, .body-text {
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--primary-color);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+.text-muted {
+  color: var(--text-tertiary);
+}
+
+/* Cards and Containers */
+.card, .container-box {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nav-link {
+  color: var(--text-secondary);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--primary-color);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-inverted);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-inverted);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.btn-outline {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-ghost {
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* Forms */
+.form-input, .form-select, .form-textarea {
+  background-color: var(--bg-primary);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-label {
+  color: var(--text-secondary);
+}
+
+/* Tasbih Counter */
+.tasbih-counter {
+  color: var(--primary-color);
+}
+
+.tasbih-label {
+  color: var(--text-secondary);
+}
+
+/* Dhikr Cards */
+.dhikr-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+}
+
+.dhikr-card-title {
+  color: var(--primary-color);
+}
+
+.dhikr-card-arabic {
+  color: var(--text-primary);
+}
+
+.dhikr-card-translation {
+  color: var(--text-secondary);
+}
+
+.dhikr-card-source {
+  color: var(--text-tertiary);
+}
+
+/* Progress Indicators */
+.progress-bar {
+  background-color: var(--neutral-200);
+}
+
+.progress-value {
+  background-color: var(--primary-color);
+}
+
+/* Badges */
+.badge-primary {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-light);
+  color: var(--secondary-dark);
+}
+
+/* Alerts and Messages */
+.alert-success {
+  background-color: var(--success-color);
+  color: var(--text-inverted);
+}
+
+.alert-warning {
+  background-color: var(--warning-color);
+  color: var(--text-inverted);
+}
+
+.alert-error {
+  background-color: var(--error-color);
+  color: var(--text-inverted);
+}
+
+.alert-info {
+  background-color: var(--info-color);
+  color: var(--text-inverted);
+}
+
+/* Transitions for Theme Switching */
+body, 
+.card, 
+.navbar, 
+.btn, 
+.form-input, 
+.form-select, 
+.form-textarea,
+.dhikr-card,
+.progress-bar,
+.progress-value,
+.badge,
+.alert {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.theme-toggle-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root,
+  .light-theme,
+  .dark-theme {
+    --primary-color: #007700;
+    --primary-dark: #005500;
+    --primary-light: #CCFFCC;
+    
+    --secondary-color: #CC7700;
+    --secondary-dark: #AA5500;
+    --secondary-light: #FFEECC;
+    
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #555555;
+    --text-inverted: #FFFFFF;
+    
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --bg-tertiary: #EEEEEE;
+    
+    --border-light: #999999;
+    --border-medium: #666666;
+    --border-dark: #333333;
+  }
+  
+  .dark-theme {
+    --text-primary: #FFFFFF;
+    --text-secondary: #DDDDDD;
+    --text-tertiary: #BBBBBB;
+    --text-inverted: #000000;
+    
+    --bg-primary: #000000;
+    --bg-secondary: #222222;
+    --bg-tertiary: #333333;
+  }
+  
+  /* Increase contrast for interactive elements */
+  .btn, .nav-link, a {
+    text-decoration: underline;
+  }
+  
+  .form-input, .form-select, .form-textarea {
+    border-width: 2px;
+  }
+}
+
+/* Print-specific theme */
+@media print {
+  :root,
+  .light-theme,
+  .dark-theme {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #FFFFFF;
+    
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    
+    --border-light: #CCCCCC;
+    --border-medium: #999999;
+    --border-dark: #666666;
+  }
+  
+  /* Remove shadows and backgrounds for better printing */
+  .card, .container-box, .navbar, .btn {
+    box-shadow: none !important;
+    background-color: transparent !important;
+    border: 1px solid var(--border-light) !important;
+  }
+  
+  /* Ensure text is visible on print */
+  .btn, .nav-link, a {
+    color: var(--text-primary) !important;
+  }
+}

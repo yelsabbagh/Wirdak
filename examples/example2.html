@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>مسبحة الأذكار</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* --- Configuration --- */
+            --visible-beads: 5;
+            --bead-size: 60px;
+            --bead-margin: 10px;
+            /* --- Let CSS calculate these derived values --- */
+            --total-bead-width: calc(var(--bead-size) + (var(--bead-margin) * 2));
+            --window-width: calc(var(--total-bead-width) * var(--visible-beads));
+            --animation-speed: 0.4s;
+
+            /* --- Islamic Color Palette (from previous version) --- */
+            --color-bg: #f4f1ea;
+            --color-text-primary: #4a4a4a;
+            --color-section1-bg: var(--color-bg);
+            --color-section2-bg: #e8e8e8;
+            --color-counter-area-bg: #e8e8e8;
+            --color-counter-area-border: #dcdcdc;
+            --color-dhikr-selected-text: #2a6f6f;
+            --color-dhikr-option-text: #2a6f6f;
+            --color-counter-hits: #8b5a2b;
+            --color-counter-label: #666;
+            --color-reset-bg: #8b5a2b;
+            --color-reset-text: #ffffff;
+            --color-reset-hover-bg: #a06b3e;
+            --color-dhikr-option-bg: #ffffff;
+            --color-dhikr-option-border: #e0e0e0;
+            --color-dhikr-option-hover-bg: #f9f9f9;
+            --color-dhikr-evidence: #777;
+            --color-dhikr-evidence-border: #eee;
+            --color-dhikr-evidence-strong: #555;
+            --color-bead1: #2a6f6f; /* Teal */
+            --color-bead2: #8b5a2b; /* Brown */
+            --color-dhikr-option-selected-bg: #2a6f6f;
+            --color-dhikr-option-selected-border: #1e5252;
+            --color-dhikr-option-selected-text: #ffffff;
+            --color-dhikr-option-selected-evidence: #e0f2f1;
+            --color-dhikr-option-selected-evidence-border: #4a8a8a;
+            --color-dhikr-option-selected-evidence-strong: #c0dfdf;
+            --color-arrow-bg: rgba(139, 90, 43, 0.08);
+            --color-arrow-hover-bg: rgba(139, 90, 43, 0.15);
+            --color-arrow-icon: #8b5a2b;
+            --color-personal-best-bg: rgba(42, 111, 111, 0.1); /* Light teal background */
+            --color-personal-best-text: var(--color-dhikr-selected-text); /* Teal text */
+
+            /* --- Layout --- */
+            --arrow-size: 40px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Noto Kufi Arabic', system-ui, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            overscroll-behavior-y: contain;
+            user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+            min-height: 100vh;
+        }
+
+        .app-container { /* Simple wrapper */ }
+
+        .app-section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px 70px 20px;
+            position: relative;
+        }
+
+        #tasbih-view { background-color: var(--color-section1-bg); }
+        #selection-view {
+            background-color: var(--color-section2-bg);
+            padding-top: 60px; padding-bottom: 80px;
+            justify-content: flex-start;
+        }
+
+        /* --- Tasbih View --- */
+        #misbaha-interaction-area {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             width: 100%;
+             /* Let content define max-width, or set a general one if needed */
+             max-width: 600px; /* Example max-width */
+             margin: 0 auto;
+        }
+
+        #counter-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px; /* Reduced margin */
+            padding: 10px 15px;
+            gap: 10px; /* Reduced gap */
+            flex-wrap: wrap;
+            background-color: var(--color-counter-area-bg);
+            border: 1px solid var(--color-counter-area-border);
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+         /* New Personal Best Display */
+         #personal-best {
+            font-size: 0.8em;
+            font-weight: 500;
+            color: var(--color-personal-best-text);
+            background-color: var(--color-personal-best-bg);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-top: 5px; /* Space below counter area */
+            text-align: center;
+            width: fit-content; /* Size to content */
+            align-self: center; /* Center it */
+            order: 4; /* Position below counter on small screens */
+        }
+
+
+        #selected-dhikr {
+            font-size: 1.0em; /* Slightly smaller for potentially long text */
+            font-weight: 600;
+            color: var(--color-dhikr-selected-text);
+            text-align: center;
+            flex-grow: 1; /* Takes middle space */
+            padding: 8px 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.5);
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3; /* Adjusted line height */
+            order: 2; /* Center */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for long text */
+            white-space: nowrap; /* Prevent wrapping */
+            min-width: 120px; /* Ensure some minimum width */
+        }
+
+        #counter-display {
+            font-size: 1.8em; /* Slightly smaller */
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 10px;
+            min-width: 80px; /* Reduced min-width */
+            text-align: center;
+            order: 3; /* Right */
+            white-space: nowrap; /* Prevent wrapping inside */
+        }
+        #counter-display .hits {
+            color: var(--color-counter-hits);
+            margin-left: 5px; /* Reduced space */
+        }
+         #counter-display span:not(.hits) {
+             font-size: 0.5em;
+             font-weight: 500;
+             color: var(--color-counter-label);
+         }
+
+        #reset-button {
+             padding: 10px 15px; /* Adjusted padding */
+             background-color: var(--color-reset-bg);
+             color: var(--color-reset-text);
+             border: none;
+             border-radius: 8px;
+             cursor: pointer;
+             font-size: 0.9em;
+             font-weight: 500;
+             transition: background-color 0.2s ease, transform 0.1s ease;
+             white-space: nowrap;
+             order: 1; /* Left */
+         }
+         #reset-button:hover { background-color: var(--color-reset-hover-bg); }
+         #reset-button:active { transform: scale(0.95); }
+
+        /* --- Bead Slider - Rely more on CSS Variables --- */
+        #bead-window {
+            /* Width is now set by CSS variable directly */
+            width: var(--window-width);
+            /* Ensure width doesn't exceed parent on very small screens if needed */
+            max-width: 100%;
+            height: calc(var(--bead-size) + 10px);
+            overflow: hidden; /* CRITICAL: Hides non-visible beads */
+            position: relative;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 15px; /* Space below counter/best score */
+            background-color: rgba(0,0,0,0.02);
+            border: 1px solid var(--color-counter-area-border);
+        }
+
+        #bead-slider {
+            display: flex; /* CRITICAL: Lays out beads horizontally */
+            height: 100%;
+            position: relative;
+            /* 'left' is not needed, transform handles positioning */
+            align-items: center; /* Vertically center beads */
+             /* CRITICAL: Will be set by JS */
+            transform: translateX(0px);
+            transition: transform var(--animation-speed) ease-out;
+             /* Ensure beads don't wrap */
+            white-space: nowrap;
+            will-change: transform; /* Hint for performance */
+        }
+
+        .bead {
+             /* Use CSS variables for sizing */
+            width: var(--bead-size);
+            height: var(--bead-size);
+            margin: 0 var(--bead-margin);
+            border-radius: 50%;
+            flex-shrink: 0; /* CRITICAL: Prevent beads from shrinking */
+            display: inline-block; /* Ensure it takes space */
+            vertical-align: middle; /* Align with flex center */
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), inset 0 -1px 3px rgba(0,0,0,0.2), 0 1px 1px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .bead.color1 { background-color: var(--color-bead1); }
+        .bead.color2 { background-color: var(--color-bead2); }
+
+        /* --- Selection View --- */
+        #selection-view h2 {
+            font-size: 1.6em; font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 25px; text-align: center;
+        }
+        #dhikr-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px; width: 100%; max-width: 900px; padding: 0 10px;
+        }
+        .dhikr-option {
+            background-color: var(--color-dhikr-option-bg);
+            padding: 18px 20px; border-radius: 12px; cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            border: 1px solid var(--color-dhikr-option-border);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .dhikr-option:hover {
+            transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+            background-color: var(--color-dhikr-option-hover-bg);
+        }
+         .dhikr-option:active { transform: translateY(0px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); }
+        .dhikr-text {
+            font-size: 1.1em; font-weight: 600;
+            color: var(--color-dhikr-option-text); line-height: 1.5;
+        }
+        .dhikr-evidence {
+            font-size: 0.85em; color: var(--color-dhikr-evidence); line-height: 1.6;
+            border-top: 1px dashed var(--color-dhikr-evidence-border);
+            padding-top: 10px; margin-top: 5px;
+        }
+        .dhikr-evidence strong { font-weight: 600; color: var(--color-dhikr-evidence-strong); }
+
+        /* Selected Dhikr Option Styling */
+        .dhikr-option.selected {
+            background-color: var(--color-dhikr-option-selected-bg);
+            border-color: var(--color-dhikr-option-selected-border);
+            color: var(--color-dhikr-option-selected-text);
+            box-shadow: 0 4px 10px rgba(42, 111, 111, 0.2);
+        }
+        .dhikr-option.selected .dhikr-text { color: var(--color-dhikr-option-selected-text); }
+        .dhikr-option.selected .dhikr-evidence {
+            color: var(--color-dhikr-option-selected-evidence);
+            border-top-color: var(--color-dhikr-option-selected-evidence-border);
+        }
+         .dhikr-option.selected .dhikr-evidence strong { color: var(--color-dhikr-option-selected-evidence-strong); }
+
+        /* --- Navigation Arrows --- */
+        .scroll-arrow {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: var(--arrow-size); height: var(--arrow-size);
+            background-color: var(--color-arrow-bg); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: background-color 0.2s ease; z-index: 10;
+            border: 1px solid rgba(139, 90, 43, 0.1);
+        }
+        .scroll-arrow:hover { background-color: var(--color-arrow-hover-bg); }
+        .scroll-arrow svg { width: 60%; height: 60%; fill: var(--color-arrow-icon); }
+        #arrow-down { bottom: 20px; }
+        #arrow-up { bottom: 20px; }
+
+         /* --- Responsiveness --- */
+         @media (max-width: 768px) {
+             :root { --bead-size: 50px; --bead-margin: 8px; }
+             #selected-dhikr { font-size: 0.95em; }
+             #counter-display { font-size: 1.7em; min-width: 70px; }
+             #dhikr-selection { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+             .app-section { padding: 30px 15px 70px 15px; }
+             #selection-view h2 { font-size: 1.4em; }
+             .dhikr-text { font-size: 1em; }
+             .dhikr-evidence { font-size: 0.8em; }
+         }
+         @media (max-width: 480px) {
+             :root { --bead-size: 45px; --bead-margin: 6px; --visible-beads: 4; }
+             #counter-area {
+                 flex-direction: row; /* Keep horizontal but wrap */
+                 justify-content: center; /* Center items when wrapped */
+                 gap: 8px;
+                 padding: 10px;
+             }
+              /* Adjust order and sizing for small screens */
+             #reset-button { order: 1; padding: 8px 12px; font-size: 0.85em; }
+             #selected-dhikr { order: 2; flex-grow: 1; font-size: 0.9em; min-width: 100px; }
+             #counter-display { order: 3; font-size: 1.6em; min-width: 60px; padding: 4px 8px; }
+             #personal-best { width: 100%; margin-top: 10px; order: 4;} /* Full width below */
+
+             #bead-window { margin-top: 20px; }
+             #dhikr-selection { grid-template-columns: 1fr; gap: 12px; }
+             .app-section { padding: 20px 10px 70px 10px; }
+             #selection-view { padding-top: 40px; }
+             #selection-view h2 { font-size: 1.3em; margin-bottom: 20px; }
+             :root { --arrow-size: 35px; }
+             #arrow-down, #arrow-up { bottom: 15px; }
+         }
+
+
+         /* Add temporarily for debugging */
+#bead-window {
+    background-color: rgba(255, 0, 0, 0.1) !important;
+    min-height: 70px !important;
+}
+
+#bead-slider {
+    background-color: rgba(0, 0, 255, 0.1) !important;
+}
+
+.bead {
+    /* Force beads to be visible */
+    opacity: 1 !important;
+    border: 2px solid black !important;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Section 1: Tasbih View -->
+        <section id="tasbih-view" class="app-section" aria-label="قسم التسبيح والعداد">
+
+            <div id="misbaha-interaction-area">
+                <!-- Counter Area: Dhikr Display, Counter, Reset Button -->
+                <div id="counter-area">
+                    <button id="reset-button" aria-label="إعادة ضبط العداد الكلي">إعادة الضبط</button>
+                    <div id="selected-dhikr" aria-live="polite">اختر ذكراً للبدء</div>
+                    <div id="counter-display" aria-live="polite">
+                        <span class="hits">0</span>
+                        <span>مرة</span>
+                    </div>
+                     <!-- Personal Best Display Added Here -->
+                     <div id="personal-best" aria-live="polite">أعلى مجموع: 0</div>
+                </div>
+
+
+                <!-- Bead Slider -->
+                <div id="bead-window" role="button" aria-label="زيادة العداد مرة واحدة" tabindex="0">
+                    <div id="bead-slider">
+                        <!-- Beads generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Down Arrow -->
+            <button id="arrow-down" class="scroll-arrow" aria-label="الانتقال إلى قسم اختيار الذكر" onclick="scrollToSelection()">
+                <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </button>
+
+        </section>
+
+        <!-- Section 2: Dhikr Selection View -->
+        <section id="selection-view" class="app-section" aria-label="قسم اختيار الذكر">
+
+             <h2>اختر الذكر</h2>
+             <div id="dhikr-selection">
+                 <!-- Options remain the same as previous version -->
+                 <!-- Option 1 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="tahlil_100" data-dhikr-text="لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير">
+                     <span class="dhikr-text">لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير</span>
+                     <span class="dhikr-evidence">
+                         قال رسول الله ﷺ: "من قالها في يوم مائة مرة، كانت له عدل عشر رقاب، وكُتبت له مائة حسنة، ومُحيت عنه مائة سيئة..."
+                         <strong>(رواه البخاري ومسلم)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 2 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="tasbih_tahmid_tahlil_takbir" data-dhikr-text="سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر">
+                     <span class="dhikr-text">سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر</span>
+                     <span class="dhikr-evidence">
+                         قال النبي ﷺ: "أحب الكلام إلى الله أربع..."
+                         <strong>(رواه مسلم)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 3 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="istighfar" data-dhikr-text="أستغفر الله">
+                     <span class="dhikr-text">أستغفر الله</span>
+                     <span class="dhikr-evidence">
+                         قال النبي ﷺ: "والله إني لأستغفر الله وأتوب إليه في اليوم أكثر من سبعين مرة" <strong>(رواه البخاري)</strong>. "...من لزم الاستغفار جعل الله له من كل هم فرجا..." <strong>(رواه أبو داود)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 4 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="salat_nabi" data-dhikr-text="اللهم صل على محمد وعلى آل محمد">
+                     <span class="dhikr-text">الصلاة على النبي ﷺ</span>
+                     <span class="dhikr-evidence">
+                         قال رسول الله ﷺ: "من صلى عليّ صلاة، صلى الله عليه بها عشرًا" <strong>(رواه مسلم)</strong>.
+                     </span>
+                 </div>
+                 <!-- Option 5 -->
+                  <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="tasbih_bihamdih_adheem" data-dhikr-text="سبحان الله وبحمده، سبحان الله العظيم">
+                     <span class="dhikr-text">سبحان الله وبحمده، سبحان الله العظيم</span>
+                     <span class="dhikr-evidence">
+                         قال النبي ﷺ: "كلمتان خفيفتان على اللسان، ثقيلتان في الميزان، حبيبتان إلى الرحمن..."
+                         <strong>(رواه البخاري ومسلم)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 6 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="hawqala" data-dhikr-text="لا حول ولا قوة إلا بالله">
+                     <span class="dhikr-text">لا حول ولا قوة إلا بالله</span>
+                     <span class="dhikr-evidence">
+                         قال ﷺ: "ألا أدلك على كنز من كنوز الجنة؟..."
+                         <strong>(رواه البخاري ومسلم)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 7 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="hasbunallah" data-dhikr-text="حسبنا الله ونعم الوكيل">
+                     <span class="dhikr-text">حسبنا الله ونعم الوكيل</span>
+                     <span class="dhikr-evidence">
+                         ﴿...وَقَالُوا حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ﴾
+                         <strong>(آل عمران: 173)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 8 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="dhikr_souq" data-dhikr-text="لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، يحيي ويميت، وهو حي لا يموت، بيده الخير، وهو على كل شيء قدير">
+                     <span class="dhikr-text">ذكر دخول السوق</span>
+                     <span class="dhikr-evidence">
+                         "...كتب الله له ألف ألف حسنة..."
+                         <strong>(رواه الترمذي، حسن)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 9 -->
+                  <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="ayat_kursi" data-dhikr-text="قراءة آية الكرسي">
+                     <span class="dhikr-text">قراءة آية الكرسي</span>
+                     <span class="dhikr-evidence">
+                         قال ﷺ: "من قرأ آية الكرسي دبر كل صلاة لم يمنعه من دخول الجنة إلا أن يموت"
+                         <strong>(رواه النسائي، صححه الألباني)</strong>
+                     </span>
+                 </div>
+                  <!-- Option 10 -->
+                 <div class="dhikr-option" role="button" tabindex="0" data-dhikr-key="ikhlas_muawwidhatayn" data-dhikr-text="قراءة الإخلاص والمعوذتين (ثلاثًا)">
+                     <span class="dhikr-text">الإخلاص، الفلق، الناس (ثلاثًا)</span>
+                     <span class="dhikr-evidence">
+                         كان النبي ﷺ يقولها ثلاث مرات حين يصبح وحين يمسي، ويقول: "تكفيك من كل شيء"
+                          <strong>(رواه الترمذي، صححه الألباني)</strong>
+                     </span>
+                 </div>
+                 <!-- Option 11: Add Custom Dhikr -->
+                  <div class="dhikr-option custom-dhikr-option" role="button" tabindex="0" data-dhikr-key="custom" data-dhikr-text="">
+                     <span class="dhikr-text">ذكر مخصص...</span>
+                     <span class="dhikr-evidence">
+                         اضغط هنا لإضافة ذكر غير موجود في القائمة وتكراره.
+                     </span>
+                 </div>
+             </div>
+             <!-- Scroll Up Arrow -->
+            <button id="arrow-up" class="scroll-arrow" aria-label="العودة إلى قسم التسبيح" onclick="scrollToTasbih()">
+                <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6 1.41 1.41z"/></svg>
+            </button>
+        </section>
+    </div> <!-- End app-container -->
+
+    <script>
+// Add this code at the top of your script section, replacing the existing slider implementation
+
+// ===== REPLACEMENT SLIDER IMPLEMENTATION =====
+
+// This will replace your existing slider implementation with a simpler one
+function replaceSliderImplementation() {
+  // First, let's create the core functions that will handle the beads
+
+  // Modified updateCachedDimensions - simplify and make more robust
+  window.updateCachedDimensions = function() {
+    try {
+      const rootStyle = getComputedStyle(document.documentElement);
+      cachedDimensions = {
+        beadSize: parseInt(rootStyle.getPropertyValue('--bead-size').trim() || '60', 10),
+        beadMargin: parseInt(rootStyle.getPropertyValue('--bead-margin').trim() || '10', 10),
+        visibleBeads: parseInt(rootStyle.getPropertyValue('--visible-beads').trim() || '5', 10)
+      };
+      
+      // Calculate derived values
+      cachedDimensions.totalBeadWidth = cachedDimensions.beadSize + (cachedDimensions.beadMargin * 2);
+      cachedDimensions.windowWidth = cachedDimensions.totalBeadWidth * cachedDimensions.visibleBeads;
+      
+      // Get animation speed
+      animationSpeedMs = parseFloat(rootStyle.getPropertyValue('--animation-speed').trim() || '0.4') * 1000;
+      
+      console.log("Updated dimensions:", JSON.stringify(cachedDimensions));
+    } catch (e) {
+      console.error("Error reading CSS variables:", e);
+      // Use defaults
+      cachedDimensions = { 
+        beadSize: 60, 
+        beadMargin: 10, 
+        visibleBeads: 5,
+        totalBeadWidth: 80,
+        windowWidth: 400
+      };
+      animationSpeedMs = 400;
+    }
+  };
+
+  // Completely new initialization function
+  window.initializeSlider = function() {
+    console.log("Initializing slider with NEW implementation");
+    
+    // Clear everything
+    beadSlider.innerHTML = '';
+    isSliderInitialized = false;
+    
+    // Make sure we have the latest dimensions
+    updateCachedDimensions();
+    
+    // Create a fixed number of beads - just enough to fill the view plus a bit of overflow
+    const totalBeadsToCreate = cachedDimensions.visibleBeads * 3; // Triple the visible amount
+    
+    for (let i = 0; i < totalBeadsToCreate; i++) {
+      const beadElement = document.createElement('div');
+      
+      // Determine bead color class
+      const colorClass = (i % 2 === 0) ? 'color1' : 'color2';
+      beadElement.classList.add('bead', colorClass);
+      
+      // Calculate left position
+      // Position each bead precisely using absolute positioning instead of transform
+      const leftPosition = i * cachedDimensions.totalBeadWidth;
+      
+      // Apply styles directly to ensure they're visible
+      beadElement.style.cssText = `
+        position: absolute;
+        left: ${leftPosition}px;
+        top: 5px; /* Small offset from top */
+        width: ${cachedDimensions.beadSize}px;
+        height: ${cachedDimensions.beadSize}px;
+        background-color: ${colorClass === 'color1' ? 'var(--color-bead1, #2a6f6f)' : 'var(--color-bead2, #8b5a2b)'};
+        border-radius: 50%;
+        margin: 0;
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: block !important;
+      `;
+      
+      beadSlider.appendChild(beadElement);
+    }
+    
+    // Update slider container style
+    beadSlider.style.cssText = `
+      position: relative;
+      height: 100%;
+      width: ${totalBeadsToCreate * cachedDimensions.totalBeadWidth}px;
+      left: 0;
+      transition: none;
+    `;
+    
+    // Mark as initialized
+    isSliderInitialized = true;
+    
+    // Apply the initial position based on counter
+    repositionBeads(true);
+    
+    console.log("NEW slider initialization complete - created", totalBeadsToCreate, "beads");
+  };
+  
+  // New positioning function - uses left property instead of transform
+  window.repositionBeads = function(isImmediate = false) {
+    if (!isSliderInitialized) {
+      console.warn("Cannot position beads - slider not initialized");
+      return;
+    }
+    
+    // Calculate position in cycle
+    const countInCycle = currentGlobalCount % 33; // Fixed 33 logical beads
+    
+    // Calculate offset to center the current bead
+    const centeringOffset = (cachedDimensions.windowWidth - cachedDimensions.totalBeadWidth) / 2;
+    const leftPosition = -(countInCycle * cachedDimensions.totalBeadWidth) + centeringOffset;
+    
+    // Apply the position
+    beadSlider.style.transition = isImmediate ? 'none' : `left ${animationSpeedMs/1000}s ease-out`;
+    beadSlider.style.left = `${leftPosition}px`;
+    
+    console.log(`Positioned beads: count=${currentGlobalCount}, cycle=${countInCycle}, left=${leftPosition}px`);
+  };
+  
+  // Replace the handleInteraction function
+  window.handleInteraction = function() {
+    if (!isSliderInitialized) return;
+    
+    currentGlobalCount++;
+    updateCounterDisplay();
+    
+    // Check and update personal best
+    if (currentGlobalCount > personalBest) {
+      personalBest = currentGlobalCount;
+      updatePersonalBestDisplay();
+      savePersonalBest();
+    }
+    
+    saveState();
+    
+    // Use the new repositioning function
+    repositionBeads();
+    
+    // Vibration feedback if available
+    if (navigator.vibrate) {
+      try { navigator.vibrate(15); } catch(e) { /* Ignore errors */ }
+    }
+  };
+  
+  // Ensure the initialization happens on page load
+  const originalDOMLoaded = document.body.onload || function(){};
+  document.body.onload = function() {
+    originalDOMLoaded();
+    console.log("Onload event: initializing beads with new implementation");
+    setTimeout(initializeSlider, 100); // Small delay
+  };
+  
+  // Override the bead window styles
+  const styleOverride = document.createElement('style');
+  styleOverride.textContent = `
+    #bead-window {
+      overflow: hidden !important;
+      position: relative !important;
+      background-color: rgba(0,0,0,0.03) !important;
+      border: 1px solid #dcdcdc !important;
+    }
+    
+    #bead-slider {
+      position: relative !important;
+    }
+    
+    .bead {
+      position: absolute !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      display: block !important;
+    }
+  `;
+  document.head.appendChild(styleOverride);
+  
+  // Re-initialize immediately if DOM is already loaded
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    console.log("Document already loaded - initializing now");
+    setTimeout(initializeSlider, 100);
+  }
+  
+  // Also use the window.load event as a backup
+  window.addEventListener('load', function() {
+    console.log("Window load event - initializing");
+    setTimeout(initializeSlider, 100);
+  });
+  
+  console.log("Slider implementation replaced");
+}
+
+// Execute the replacement function
+replaceSliderImplementation();
+
+// Also replace the window resize handler for the new implementation
+window.addEventListener('resize', function() {
+  console.log("Window resized");
+  // Update dimensions
+  updateCachedDimensions();
+  // Reinitialize the entire slider
+  initializeSlider();
+});
+
+// Replace the resetCounter function to use our new reposition function
+const originalResetCounter = window.resetCounter;
+window.resetCounter = function() {
+  if (currentGlobalCount > 0) {
+    if (confirm('إعادة ضبط المجموع الكلي إلى الصفر؟ (لن يتم إعادة ضبط أعلى مجموع)')) {
+      currentGlobalCount = 0;
+      updateCounterDisplay();
+      saveState();
+      if (isSliderInitialized) {
+        // Use the new function
+        repositionBeads();
+      }
+    }
+  }
+};
+
+// === End of replacement implementation ===
+
+
+        // --- Configuration Object (Simplified) ---
+        const config = {
+            totalLogicalBeads: 33, // Visual cycle length
+            defaultDhikrText: "اختر ذكراً للبدء",
+            defaultDhikrKey: "none",
+            localStoragePrefix: "misbahaApp_",
+            // CSS Variables will be read directly when needed
+        };
+
+        // --- DOM Elements ---
+        const tasbihView = document.getElementById('tasbih-view');
+        const selectionView = document.getElementById('selection-view');
+        const selectedDhikrDisplay = document.getElementById('selected-dhikr');
+        const counterDisplay = document.getElementById('counter-display');
+        const counterHitsSpan = counterDisplay.querySelector('.hits');
+        const personalBestDisplay = document.getElementById('personal-best'); // Added
+        const beadWindow = document.getElementById('bead-window');
+        const beadSlider = document.getElementById('bead-slider');
+        const resetButton = document.getElementById('reset-button');
+        const dhikrOptions = document.querySelectorAll('.dhikr-option');
+        const dhikrSelectionContainer = document.getElementById('dhikr-selection');
+
+        // --- State ---
+        let currentGlobalCount = 0; // *** Changed to Global Count ***
+        let personalBest = 0;       // *** Added Personal Best ***
+        let currentDhikrKey = config.defaultDhikrKey;
+        let currentDhikrText = config.defaultDhikrText;
+        let logicalBeadsData = [];
+        let isSliderInitialized = false;
+        let animationSpeedMs = 400; // Default, will be updated
+
+        // --- Dimension Cache (To avoid constant style lookups) ---
+        let cachedDimensions = {
+             beadSize: 60,
+             beadMargin: 10,
+             visibleBeads: 5,
+             totalBeadWidth: 80,
+             windowWidth: 400,
+         };
+
+        // --- Helper Functions ---
+
+        // *** Reads CSS Variables and updates cache ***
+        function updateCachedDimensions() {
+             try {
+                 const rootStyle = getComputedStyle(document.documentElement);
+                 cachedDimensions.beadSize = parseInt(rootStyle.getPropertyValue('--bead-size').trim() || '60', 10);
+                 cachedDimensions.beadMargin = parseInt(rootStyle.getPropertyValue('--bead-margin').trim() || '10', 10);
+                 cachedDimensions.visibleBeads = parseInt(rootStyle.getPropertyValue('--visible-beads').trim() || '5', 10);
+                 animationSpeedMs = parseFloat(rootStyle.getPropertyValue('--animation-speed').trim() || '0.4') * 1000;
+
+                 cachedDimensions.totalBeadWidth = cachedDimensions.beadSize + (cachedDimensions.beadMargin * 2);
+                 // We let CSS calculate window width, JS just reads it if needed for calculation,
+                 // but doesn't need to set it anymore.
+                 // cachedDimensions.windowWidth = cachedDimensions.totalBeadWidth * cachedDimensions.visibleBeads;
+
+                 // Log dimensions for debugging the bead issue
+                 // console.log("Updated Dimensions:", JSON.stringify(cachedDimensions), `Speed: ${animationSpeedMs}`);
+             } catch (e) {
+                 console.error("Error reading CSS variables:", e);
+                 // Use defaults if error occurs
+                 cachedDimensions = { beadSize: 60, beadMargin: 10, visibleBeads: 5, totalBeadWidth: 80, windowWidth: 400 };
+                 animationSpeedMs = 400;
+             }
+        }
+
+        function loadState() {
+            // Load selected Dhikr
+            currentDhikrKey = localStorage.getItem(`${config.localStoragePrefix}selectedDhikrKey`) || config.defaultDhikrKey;
+            currentDhikrText = localStorage.getItem(`${config.localStoragePrefix}selectedDhikrText`) || config.defaultDhikrText;
+            selectedDhikrDisplay.textContent = currentDhikrText;
+            highlightSelectedOption(currentDhikrKey);
+            updateCustomDhikrDisplay(); // Update custom text display
+
+            // *** Load GLOBAL count ***
+            currentGlobalCount = parseInt(localStorage.getItem(`${config.localStoragePrefix}globalCount`) || '0', 10);
+            updateCounterDisplay();
+
+            // *** Load Personal Best ***
+            personalBest = parseInt(localStorage.getItem(`${config.localStoragePrefix}personalBest`) || '0', 10);
+            updatePersonalBestDisplay();
+
+            console.log(`Loaded state: Dhikr=${currentDhikrKey}, GlobalCount=${currentGlobalCount}, Best=${personalBest}`);
+        }
+
+        function saveState() {
+             // Save selected Dhikr
+             localStorage.setItem(`${config.localStoragePrefix}selectedDhikrKey`, currentDhikrKey);
+             localStorage.setItem(`${config.localStoragePrefix}selectedDhikrText`, currentDhikrText);
+             // *** Save GLOBAL count ***
+             localStorage.setItem(`${config.localStoragePrefix}globalCount`, currentGlobalCount);
+             // Personal best is saved separately only when updated
+             // console.log(`Saved state: Dhikr=${currentDhikrKey}, GlobalCount=${currentGlobalCount}`);
+        }
+
+        // Separate function to save personal best only when it changes
+        function savePersonalBest() {
+             localStorage.setItem(`${config.localStoragePrefix}personalBest`, personalBest);
+             console.log(`Saved NEW Personal Best: ${personalBest}`);
+        }
+
+
+        function updateCounterDisplay() {
+            counterHitsSpan.textContent = currentGlobalCount;
+        }
+
+        // *** Added: Update Personal Best Display ***
+        function updatePersonalBestDisplay() {
+             personalBestDisplay.textContent = `أعلى مجموع: ${personalBest}`;
+        }
+
+        // --- Core Logic Functions ---
+
+        function initializeSlider() {
+    console.log("Initializing slider...");
+    updateCachedDimensions();
+
+    // Clear and recreate beads
+    beadSlider.innerHTML = '';
+    logicalBeadsData = [];
+
+    // Create logical bead data
+    for (let i = 0; i < config.totalLogicalBeads; i++) {
+        logicalBeadsData.push({
+            id: i,
+            colorClass: (i % 2 === 0) ? 'color1' : 'color2'
+        });
+    }
+
+    // Create FEWER beads initially - just enough to fill the view
+    // Start with a small number and position them at x=0
+    for (let i = 0; i < 10; i++) {
+        const logicalIndex = i % config.totalLogicalBeads;
+        const beadData = logicalBeadsData[logicalIndex];
+
+        const beadElement = document.createElement('div');
+        beadElement.classList.add('bead', beadData.colorClass);
+        beadElement.dataset.logicalIndex = logicalIndex;
+        // Add inline styles as a test
+        beadElement.style.width = `${cachedDimensions.beadSize}px`;
+        beadElement.style.height = `${cachedDimensions.beadSize}px`;
+        beadElement.style.margin = `0 ${cachedDimensions.beadMargin}px`;
+        beadElement.textContent = i; // Add numbers for visibility
+        beadSlider.appendChild(beadElement);
+    }
+
+    // Force position to start of window - no transforms yet
+    beadSlider.style.transition = 'none';
+    beadSlider.style.transform = 'translateX(0)';
+    
+    // Mark as initialized
+    isSliderInitialized = true;
+    
+    // After a delay, add more beads and apply proper positioning
+    setTimeout(() => {
+        completeSliderSetup();
+    }, 1000); // Longer delay to ensure beads are visible first
+}
+
+// New function to complete the setup after initial rendering
+function completeSliderSetup() {
+    // Now that we've verified initial beads are visible,
+    // continue with the full setup
+    const buffer = Math.ceil(cachedDimensions.visibleBeads / 2) + 2;
+    
+    // Clear and rebuild with proper buffer
+    beadSlider.innerHTML = '';
+    
+    // Create DOM elements with full buffer
+    for (let i = -buffer; i < config.totalLogicalBeads + buffer; i++) {
+        const logicalIndex = (i + config.totalLogicalBeads) % config.totalLogicalBeads;
+        const beadData = logicalBeadsData[logicalIndex];
+
+        const beadElement = document.createElement('div');
+        beadElement.classList.add('bead', beadData.colorClass);
+        // Add inline styles to override any CSS issues
+        beadElement.style.width = `${cachedDimensions.beadSize}px`;
+        beadElement.style.height = `${cachedDimensions.beadSize}px`;
+        beadElement.style.margin = `0 ${cachedDimensions.beadMargin}px`;
+        beadElement.style.display = 'inline-block';
+        beadElement.style.visibility = 'visible';
+        beadElement.style.opacity = '1';
+        beadElement.dataset.logicalIndex = logicalIndex;
+        beadSlider.appendChild(beadElement);
+    }
+    
+    // Calculate center position - simpler approach
+    let initialOffset = cachedDimensions.totalBeadWidth * buffer;
+    beadSlider.style.transition = 'none';
+    beadSlider.style.transform = `translateX(-${initialOffset}px)`;
+    
+    // Apply proper position based on count after slight delay
+    setTimeout(() => {
+        applySlidePosition(true);
+    }, 100);
+}
+
+        // Replace your entire initializeSlider function with this:
+function initializeSlider() {
+    console.log("Initializing slider...");
+    updateCachedDimensions();
+
+    // Clear and recreate beads
+    beadSlider.innerHTML = '';
+    logicalBeadsData = [];
+
+    // Create logical bead data
+    for (let i = 0; i < config.totalLogicalBeads; i++) {
+        logicalBeadsData.push({
+            id: i,
+            colorClass: (i % 2 === 0) ? 'color1' : 'color2'
+        });
+    }
+
+    // Create FEWER beads initially - just enough to fill the view
+    // Start with a small number and position them at x=0
+    for (let i = 0; i < 10; i++) {
+        const logicalIndex = i % config.totalLogicalBeads;
+        const beadData = logicalBeadsData[logicalIndex];
+
+        const beadElement = document.createElement('div');
+        beadElement.classList.add('bead', beadData.colorClass);
+        beadElement.dataset.logicalIndex = logicalIndex;
+        // Add inline styles as a test
+        beadElement.style.width = `${cachedDimensions.beadSize}px`;
+        beadElement.style.height = `${cachedDimensions.beadSize}px`;
+        beadElement.style.margin = `0 ${cachedDimensions.beadMargin}px`;
+        beadElement.textContent = i; // Add numbers for visibility
+        beadSlider.appendChild(beadElement);
+    }
+
+    // Force position to start of window - no transforms yet
+    beadSlider.style.transition = 'none';
+    beadSlider.style.transform = 'translateX(0)';
+    
+    // Mark as initialized
+    isSliderInitialized = true;
+    
+    // After a delay, add more beads and apply proper positioning
+    setTimeout(() => {
+        completeSliderSetup();
+    }, 1000); // Longer delay to ensure beads are visible first
+}
+
+// New function to complete the setup after initial rendering
+function completeSliderSetup() {
+    // Now that we've verified initial beads are visible,
+    // continue with the full setup
+    const buffer = Math.ceil(cachedDimensions.visibleBeads / 2) + 2;
+    
+    // Clear and rebuild with proper buffer
+    beadSlider.innerHTML = '';
+    
+    // Create DOM elements with full buffer
+    for (let i = -buffer; i < config.totalLogicalBeads + buffer; i++) {
+        const logicalIndex = (i + config.totalLogicalBeads) % config.totalLogicalBeads;
+        const beadData = logicalBeadsData[logicalIndex];
+
+        const beadElement = document.createElement('div');
+        beadElement.classList.add('bead', beadData.colorClass);
+        // Add inline styles to override any CSS issues
+        beadElement.style.width = `${cachedDimensions.beadSize}px`;
+        beadElement.style.height = `${cachedDimensions.beadSize}px`;
+        beadElement.style.margin = `0 ${cachedDimensions.beadMargin}px`;
+        beadElement.style.display = 'inline-block';
+        beadElement.style.visibility = 'visible';
+        beadElement.style.opacity = '1';
+        beadElement.dataset.logicalIndex = logicalIndex;
+        beadSlider.appendChild(beadElement);
+    }
+    
+    // Calculate center position - simpler approach
+    let initialOffset = cachedDimensions.totalBeadWidth * buffer;
+    beadSlider.style.transition = 'none';
+    beadSlider.style.transform = `translateX(-${initialOffset}px)`;
+    
+    // Apply proper position based on count after slight delay
+    setTimeout(() => {
+        applySlidePosition(true);
+    }, 100);
+}
+
+// Replace your applySlidePosition function with this simplified version
+function applySlidePosition(isInitial = false) {
+    if (!isSliderInitialized) {
+        console.warn("Slider not initialized yet");
+        return;
+    }
+    
+    updateCachedDimensions();
+    
+    // Calculate position - simplify logic
+    const countInCycle = currentGlobalCount % config.totalLogicalBeads;
+    const buffer = Math.ceil(cachedDimensions.visibleBeads / 2) + 2;
+    const targetOffset = (buffer + countInCycle) * cachedDimensions.totalBeadWidth;
+    
+    // Apply transform - keep it simple
+    if (isInitial) {
+        beadSlider.style.transition = 'none';
+    } else {
+        beadSlider.style.transition = `transform ${animationSpeedMs/1000}s ease-out`;
+    }
+    
+    beadSlider.style.transform = `translateX(-${targetOffset}px)`;
+    
+    if (isInitial) {
+        setTimeout(() => {
+            beadSlider.style.transition = `transform ${animationSpeedMs/1000}s ease-out`;
+        }, 50);
+    }
+}
+
+        function handleInteraction() {
+            if (!isSliderInitialized) return;
+
+            currentGlobalCount++; // Increment GLOBAL count
+            updateCounterDisplay();
+
+            // *** Check and Update Personal Best ***
+            if (currentGlobalCount > personalBest) {
+                personalBest = currentGlobalCount;
+                updatePersonalBestDisplay();
+                savePersonalBest(); // Save only the new best score
+            }
+
+            saveState(); // Save global count and selected dhikr
+            applySlidePosition(); // Animate beads based on global count cycle
+
+            if (navigator.vibrate) {
+                try { navigator.vibrate(15); } catch(e) { /* Silently fail */ }
+            }
+        }
+
+        function resetCounter() {
+            // Reset the GLOBAL counter
+            if (currentGlobalCount > 0) {
+                // Confirmation asks about resetting the TOTAL count
+                if (confirm('إعادة ضبط المجموع الكلي إلى الصفر؟ (لن يتم إعادة ضبط أعلى مجموع)')) {
+                    currentGlobalCount = 0;
+                    updateCounterDisplay();
+                    saveState(); // Save the reset global count
+                    if (isSliderInitialized) {
+                       applySlidePosition(false); // Slide back smoothly
+                    }
+                }
+            }
+        }
+
+         function highlightSelectedOption(keyToHighlight) {
+             dhikrOptions.forEach(opt => {
+                 // Don't highlight the 'custom' input visually
+                 opt.classList.toggle('selected', opt.dataset.dhikrKey === keyToHighlight && keyToHighlight !== 'custom');
+             });
+         }
+
+         function updateCustomDhikrDisplay() {
+             const customOption = document.querySelector('.dhikr-option[data-dhikr-key="custom"] .dhikr-text');
+             if (customOption) {
+                const savedCustomText = localStorage.getItem(`${config.localStoragePrefix}customDhikrText`);
+                if (savedCustomText) {
+                    // Display saved custom text or placeholder
+                    customOption.textContent = savedCustomText.substring(0, 50) + (savedCustomText.length > 50 ? '...' : '');
+                } else {
+                    customOption.textContent = "ذكر مخصص..."; // Default placeholder
+                }
+             }
+         }
+
+
+         function selectDhikr(key, text, shouldScroll = true) {
+             console.log(`Selecting Dhikr: Key=${key}, Text=${text.substring(0,20)}...`);
+             currentDhikrKey = key;
+             currentDhikrText = text;
+             selectedDhikrDisplay.textContent = currentDhikrText;
+
+             // *** DO NOT reset or reload count - keep currentGlobalCount ***
+
+             highlightSelectedOption(key);
+             saveState(); // Save the newly selected dhikr and the *existing* global count
+
+             // Slider position remains based on global count, no change needed here unless
+             // you wanted it to visually reset (which you don't)
+             // applySlidePosition(true); // Not needed as visual cycle depends on global count
+
+             if (shouldScroll) {
+                 scrollToTasbih();
+             }
+         }
+
+        function handleDhikrSelection(event) {
+             const option = event.target.closest('.dhikr-option');
+             if (!option) return;
+
+             const key = option.dataset.dhikrKey;
+             let text = option.dataset.dhikrText;
+
+             if (key === 'custom') {
+                 const currentCustomText = localStorage.getItem(`${config.localStoragePrefix}customDhikrText`) || "";
+                 const customText = prompt("أدخل الذكر المخصص:", currentCustomText);
+                 if (customText && customText.trim() !== "") {
+                     text = customText.trim();
+                     const customKey = 'custom_user'; // Use a fixed key
+                     localStorage.setItem(`${config.localStoragePrefix}customDhikrText`, text);
+                     updateCustomDhikrDisplay(); // Update display immediately
+                     selectDhikr(customKey, text);
+                 } // No 'else return' needed, selection happens below if not custom
+
+             } else if (key) {
+                 text = option.dataset.dhikrText || option.querySelector('.dhikr-text')?.textContent || config.defaultDhikrText;
+                 selectDhikr(key, text);
+             }
+        }
+
+        // --- Navigation Functions ---
+        function scrollToSelection() { selectionView.scrollIntoView({ behavior: 'smooth' }); }
+        function scrollToTasbih() { tasbihView.scrollIntoView({ behavior: 'smooth' }); }
+
+        // --- Event Listeners ---
+        beadWindow.addEventListener('click', handleInteraction);
+        beadWindow.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleInteraction(); }
+        });
+        resetButton.addEventListener('click', resetCounter);
+        resetButton.addEventListener('keydown', (event) => {
+             if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); resetCounter(); }
+         });
+        if (dhikrSelectionContainer) {
+             dhikrSelectionContainer.addEventListener('click', handleDhikrSelection);
+             dhikrSelectionContainer.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                     if (event.target.classList.contains('dhikr-option')) { event.preventDefault(); handleDhikrSelection(event); }
+                }
+             });
+        } else { console.error("Dhikr selection container not found!"); }
+
+        // Re-calculate dimensions and apply position on resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+             clearTimeout(resizeTimeout);
+             resizeTimeout = setTimeout(() => {
+                 console.log("Window resized, updating slider position.");
+                 if (isSliderInitialized) {
+                    // Update dimensions and re-apply position *instantly*
+                    updateCachedDimensions();
+                    applySlidePosition(true);
+                 }
+                 // No need to re-initialize unless absolutely necessary
+             }, 250);
+         });
+
+         function addFixStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #bead-window {
+            background-color: rgba(0, 0, 0, 0.03);
+            border: 1px solid #ddd;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #bead-slider {
+            display: flex;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+        
+        .bead {
+            background-color: var(--color-bead1, #2a6f6f);
+            border-radius: 50%;
+            display: inline-block;
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .bead.color1 { background-color: var(--color-bead1, #2a6f6f); }
+        .bead.color2 { background-color: var(--color-bead2, #8b5a2b); }
+    `;
+    document.head.appendChild(style);
+}
+
+        // --- Initialize ---
+        document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM Loaded. Initializing application...");
+    addFixStyles(); // Add our override styles
+    updateCachedDimensions();
+    loadState();
+    initializeSlider();
+    
+    // Monitor for visibility issues
+    setTimeout(() => {
+        const beads = document.querySelectorAll('.bead');
+        console.log(`After 2s: ${beads.length} beads created`);
+        if (beads.length > 0) {
+            console.log("First bead style:", 
+                        beads[0].getBoundingClientRect(),
+                        window.getComputedStyle(beads[0]));
+        }
+    }, 2000);
+});
+
+    </script>
+
+</body>
+</html>

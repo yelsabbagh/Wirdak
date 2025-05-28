@@ -1,0 +1,45 @@
+{
+  "name": "Wirdak - Islamic Dhikr Habit Tracker",
+  "short_name": "Wirdak",
+  "description": "Islamic habit tracking app for daily dhikr, Quran reading, and spiritual consistency",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#10B981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Morning Adhkar",
+      "short_name": "Morning",
+      "description": "Start your morning adhkar",
+      "url": "/index.html?category=morning",
+      "icons": [{ "src": "/assets/icons/morning-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Evening Adhkar",
+      "short_name": "Evening",
+      "description": "Start your evening adhkar",
+      "url": "/index.html?category=evening",
+      "icons": [{ "src": "/assets/icons/evening-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "lang": "en",
+  "dir": "auto",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "categories": ["lifestyle", "productivity", "utilities"]
+}

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Islamic habit tracking app for daily dhikr, Quran reading, and spiritual consistency">
+    <meta name="theme-color" content="#10B981">
+    <title>Wirdak - Islamic Dhikr Habit Tracker</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Wirdak">
+    
+    <!-- Preload Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/themes.css">
+    <link rel="stylesheet" href="/css/arabic.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+</head>
+<body class="light-theme">
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-overlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading Wirdak...</p>
+    </div>
+
+    <!-- Message Area for Notifications -->
+    <div id="message-area" class="message-area"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="navbar-brand">
+                <img src="/assets/icons/logo.svg" alt="Wirdak" width="32" height="32">
+                <span>Wirdak</span>
+            </a>
+            
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            
+            <ul class="navbar-nav">
+                <li><a href="#" class="nav-link active" data-navigate="dashboard">Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-navigate="dhikr-list">Adhkar</a></li>
+                <li><a href="#" class="nav-link" data-navigate="quran-tracker">Quran</a></li>
+                <li><a href="#" class="nav-link" data-navigate="progress">Progress</a></li>
+                <li><a href="#" class="nav-link" data-navigate="settings">Settings</a></li>
+                <li>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-toggle-icon">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                </li>
+                <li>
+                    <button id="language-toggle" class="btn btn-ghost" aria-label="Toggle language">
+                        <span class="lang-en">عربي</span>
+                        <span class="lang-ar">English</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view">
+            <h1 class="page-title">
+                <span class="lang-en">Dashboard</span>
+                <span class="lang-ar">الرئيسية</span>
+            </h1>
+            
+            <div class="streak-card card mb-4">
+                <div class="streak-info">
+                    <h2 class="streak-title">
+                        <span class="lang-en">Current Streak</span>
+                        <span class="lang-ar">التتابع الحالي</span>
+                    </h2>
+                    <div class="streak-count">0</div>
+                    <p class="streak-description">
+                        <span class="lang-en">Days of consistency</span>
+                        <span class="lang-ar">أيام من الاستمرارية</span>
+                    </p>
+                </div>
+            </div>
+            
+            <h2 class="section-title">
+                <span class="lang-en">Daily Adhkar</span>
+                <span class="lang-ar">الأذكار اليومية</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Morning Adhkar Card -->
+                <div class="category-card card" data-category="morning">
+                    <div class="category-icon">🌅</div>
+                    <h3 class="category-title">
+                        <span class="lang-en">Morning Adhkar</span>
+                        <span class="lang-ar">أذكار الصباح</span>
+                    </h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="category-footer">
+                        <span class="completion-status">0/0</span>
+                        <button class="btn btn-primary" data-navigate="dhikr-list" data-category="morning">
+                            <span class="lang-en">Start</span>
+                            <span class="lang-ar">ابدأ</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Evening Adhkar Card -->
+                <div class="category-card card" data-category="evening">
+                    <div class="category-icon">🌆</div>
+                    <h3 class="category-title">
+                        <span class="lang-en">Evening Adhkar</span>
+                        <span class="lang-ar">أذكار المساء</span>
+                    </h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="category-footer">
+                        <span class="completion-status">0/0</span>
+                        <button class="btn btn-primary" data-navigate="dhikr-list" data-category="evening">
+                            <span class="lang-en">Start</span>
+                            <span class="lang-ar">ابدأ</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Sleep Adhkar Card -->
+                <div class="category-card card" data-category="sleep">
+                    <div class="category-icon">🌙</div>
+                    <h3 class="category-title">
+                        <span class="lang-en">Sleep Adhkar</span>
+                        <span class="lang-ar">أذكار النوم</span>
+                    </h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="category-footer">
+                        <span class="completion-status">0/0</span>
+                        <button class="btn btn-primary" data-navigate="dhikr-list" data-category="sleep">
+                            <span class="lang-en">Start</span>
+                            <span class="lang-ar">ابدأ</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Personal Daily Adhkar Card -->
+                <div class="category-card card" data-category="personalDaily">
+                    <div class="category-icon">⭐</div>
+                    <h3 class="category-title">
+                        <span class="lang-en">My Daily Dhikr</span>
+                        <span class="lang-ar">أذكاري اليومية</span>
+                    </h3>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="category-footer">
+                        <span class="completion-status">0/0</span>
+                        <button class="btn btn-primary" data-navigate="dhikr-list" data-category="personalDaily">
+                            <span class="lang-en">Start</span>
+                            <span class="lang-ar">ابدأ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="section-title">
+                <span class="lang-en">Quran Tracking</span>
+                <span class="lang-ar">متابعة القرآن</span>
+            </h2>
+            
+            <div class="quran-tracker-card card">
+                <h3 class="quran-tracker-title">
+                    <span class="lang-en">Today's Quran Time</span>
+                    <span class="lang-ar">وقت القرآن اليوم</span>
+                </h3>
+                <div class="quran-time">0 <span class="lang-en">minutes</span><span class="lang-ar">دقائق</span></div>
+                <button class="btn btn-primary" data-navigate="quran-tracker">
+                    <span class="lang-en">Track Time</span>
+                    <span class="lang-ar">تتبع الوقت</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Dhikr List View -->
+        <section id="dhikr-list" class="view hidden">
+            <h1 class="page-title">
+                <span class="lang-en">Adhkar</span>
+                <span class="lang-ar">الأذكار</span>
+            </h1>
+            
+            <div class="search-container mb-4">
+                <input type="text" id="dhikr-search" class="form-input" placeholder="Search adhkar...">
+            </div>
+            
+            <div class="tabs mb-4">
+                <button class="tab-btn active" data-tab="highlighted">
+                    <span class="lang-en">Highlighted</span>
+                    <span class="lang-ar">المميزة</span>
+                </button>
+                <button class="tab-btn" data-tab="all">
+                    <span class="lang-en">All Categories</span>
+                    <span class="lang-ar">جميع الفئات</span>
+                </button>
+                <button class="tab-btn" data-tab="custom">
+                    <span class="lang-en">My Custom</span>
+                    <span class="lang-ar">المخصصة</span>
+                </button>
+            </div>
+            
+            <div class="tab-content" id="highlighted-content">
+                <!-- Will be populated dynamically -->
+                <div class="dhikr-category" data-category="morning">
+                    <h2 class="category-title">
+                        <span class="lang-en">Morning Adhkar</span>
+                        <span class="lang-ar">أذكار الصباح</span>
+                    </h2>
+                    <div class="dhikr-list">
+                        <!-- Sample dhikr card, will be replaced dynamically -->
+                        <div class="dhikr-card">
+                            <div class="dhikr-card-header">
+                                <h3 class="dhikr-card-title">Morning Dhikr</h3>
+                                <span class="dhikr-card-count">3x</span>
+                            </div>
+                            <p class="dhikr-card-arabic arabic-text">سبحان الله وبحمده، سبحان الله العظيم</p>
+                            <p class="dhikr-card-translation">Glory be to Allah and His is the praise, Glory be to Allah the Magnificent.</p>
+                            <div class="dhikr-card-footer">
+                                <span class="dhikr-card-source">Bukhari and Muslim</span>
+                                <button class="btn btn-primary btn-sm">Start</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="all-content">
+                <!-- Will be populated dynamically -->
+            </div>
+            
+            <div class="tab-content hidden" id="custom-content">
+                <!-- Will be populated dynamically -->
+                <div class="empty-state">
+                    <p>
+                        <span class="lang-en">You haven't created any custom dhikr yet.</span>
+                        <span class="lang-ar">لم تقم بإنشاء أي ذكر مخصص بعد.</span>
+                    </p>
+                    <button class="btn btn-primary" id="add-custom-dhikr">
+                        <span class="lang-en">Add Custom Dhikr</span>
+                        <span class="lang-ar">إضافة ذكر مخصص</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Dhikr Counter View -->
+        <section id="dhikr-counter" class="view hidden">
+            <button class="btn btn-ghost back-button" data-navigate="dhikr-list">
+                <span class="lang-en">← Back</span>
+                <span class="lang-ar">رجوع →</span>
+            </button>
+            
+            <h1 class="dhikr-title">
+                <!-- Will be populated dynamically -->
+                <span class="lang-en">Dhikr Counter</span>
+                <span class="lang-ar">عداد الذكر</span>
+            </h1>
+            
+            <div class="dhikr-text arabic-text">
+                <!-- Will be populated dynamically -->
+                سبحان الله وبحمده، سبحان الله العظيم
+            </div>
+            
+            <div class="dhikr-translation">
+                <!-- Will be populated dynamically -->
+                Glory be to Allah and His is the praise, Glory be to Allah the Magnificent.
+            </div>
+            
+            <div class="tasbih-container" id="tasbih-container">
+                <!-- Will be populated by counter-animation.js -->
+            </div>
+            
+            <div class="dhikr-controls">
+                <button class="btn btn-outline" id="reset-counter">
+                    <span class="lang-en">Reset</span>
+                    <span class="lang-ar">إعادة ضبط</span>
+                </button>
+                <button class="btn btn-primary" id="complete-dhikr">
+                    <span class="lang-en">Complete</span>
+                    <span class="lang-ar">إكمال</span>
+                </button>
+            </div>
+            
+            <div class="dhikr-audio">
+                <button class="btn btn-ghost" id="play-audio">
+                    <span class="lang-en">Play Audio</span>
+                    <span class="lang-ar">تشغيل الصوت</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Quran Tracker View -->
+        <section id="quran-tracker" class="view hidden">
+            <h1 class="page-title">
+                <span class="lang-en">Quran Tracker</span>
+                <span class="lang-ar">متابعة القرآن</span>
+            </h1>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Track Your Quran Time</span>
+                    <span class="lang-ar">تتبع وقت القرآن</span>
+                </h2>
+                
+                <div class="quran-modes mb-4">
+                    <button class="btn btn-outline active" data-mode="recitation">
+                        <span class="lang-en">Recitation</span>
+                        <span class="lang-ar">تلاوة</span>
+                    </button>
+                    <button class="btn btn-outline" data-mode="memorization">
+                        <span class="lang-en">Memorization</span>
+                        <span class="lang-ar">حفظ</span>
+                    </button>
+                    <button class="btn btn-outline" data-mode="pondering">
+                        <span class="lang-en">Pondering</span>
+                        <span class="lang-ar">تدبر</span>
+                    </button>
+                </div>
+                
+                <div class="timer-display">
+                    <div class="timer-value">00:00</div>
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="start-timer">
+                            <span class="lang-en">Start</span>
+                            <span class="lang-ar">ابدأ</span>
+                        </button>
+                        <button class="btn btn-outline hidden" id="pause-timer">
+                            <span class="lang-en">Pause</span>
+                            <span class="lang-ar">إيقاف مؤقت</span>
+                        </button>
+                        <button class="btn btn-ghost" id="reset-timer">
+                            <span class="lang-en">Reset</span>
+                            <span class="lang-ar">إعادة ضبط</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="manual-entry mt-4">
+                    <h3>
+                        <span class="lang-en">Or Enter Time Manually</span>
+                        <span class="lang-ar">أو أدخل الوقت يدويًا</span>
+                    </h3>
+                    <div class="flex items-center">
+                        <input type="number" id="manual-minutes" class="form-input" min="1" max="240" placeholder="Minutes">
+                        <button class="btn btn-primary ml-2" id="save-manual-time">
+                            <span class="lang-en">Save</span>
+                            <span class="lang-ar">حفظ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">
+                    <span class="lang-en">Weekly Summary</span>
+                    <span class="lang-ar">ملخص أسبوعي</span>
+                </h2>
+                <div class="quran-stats">
+                    <!-- Will be populated dynamically -->
+                    <div class="stats-placeholder">
+                        <p>
+                            <span class="lang-en">Start tracking to see your statistics.</span>
+                            <span class="lang-ar">ابدأ المتابعة لرؤية إحصائياتك.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Progress View -->
+        <section id="progress" class="view hidden">
+            <h1 class="page-title">
+                <span class="lang-en">Progress & Analytics</span>
+                <span class="lang-ar">التقدم والتحليلات</span>
+            </h1>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Streak Statistics</span>
+                    <span class="lang-ar">إحصائيات التتابع</span>
+                </h2>
+                <div class="streak-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span class="lang-en">Current Streak</span>
+                            <span class="lang-ar">التتابع الحالي</span>
+                        </div>
+                        <div class="stat-value">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span class="lang-en">Longest Streak</span>
+                            <span class="lang-ar">أطول تتابع</span>
+                        </div>
+                        <div class="stat-value">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <span class="lang-en">Total Days</span>
+                            <span class="lang-ar">إجمالي الأيام</span>
+                        </div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Achievements</span>
+                    <span class="lang-ar">الإنجازات</span>
+                </h2>
+                <div class="achievements-list">
+                    <!-- Will be populated dynamically -->
+                    <div class="empty-state">
+                        <p>
+                            <span class="lang-en">Complete daily adhkar to earn achievements.</span>
+                            <span class="lang-ar">أكمل الأذكار اليومية لكسب الإنجازات.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">
+                    <span class="lang-en">Data Management</span>
+                    <span class="lang-ar">إدارة البيانات</span>
+                </h2>
+                <div class="data-management">
+                    <div class="export-section">
+                        <h3>
+                            <span class="lang-en">Export Your Data</span>
+                            <span class="lang-ar">تصدير بياناتك</span>
+                        </h3>
+                        <p>
+                            <span class="lang-en">Backup your progress, settings, and custom dhikr.</span>
+                            <span class="lang-ar">احتفظ بنسخة احتياطية من تقدمك وإعداداتك والأذكار المخصصة.</span>
+                        </p>
+                        <button class="btn btn-primary" id="export-data-button">
+                            <span class="lang-en">Export Data</span>
+                            <span class="lang-ar">تصدير البيانات</span>
+                        </button>
+                    </div>
+                    
+                    <div class="import-section mt-4">
+                        <h3>
+                            <span class="lang-en">Import Data</span>
+                            <span class="lang-ar">استيراد البيانات</span>
+                        </h3>
+                        <p>
+                            <span class="lang-en">Restore from a previous backup file.</span>
+                            <span class="lang-ar">استعادة من ملف نسخة احتياطية سابق.</span>
+                        </p>
+                        <label for="import-data-input" class="btn btn-outline">
+                            <span class="lang-en">Import Backup</span>
+                            <span class="lang-ar">استيراد النسخة الاحتياطية</span>
+                        </label>
+                        <input type="file" id="import-data-input" accept=".json" class="hidden">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Settings View -->
+        <section id="settings" class="view hidden">
+            <h1 class="page-title">
+                <span class="lang-en">Settings</span>
+                <span class="lang-ar">الإعدادات</span>
+            </h1>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Appearance</span>
+                    <span class="lang-ar">المظهر</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-en">Language</span>
+                        <span class="lang-ar">اللغة</span>
+                    </label>
+                    <select id="language-select" class="form-select">
+                        <option value="en">English</option>
+                        <option value="ar">العربية</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-en">Theme</span>
+                        <span class="lang-ar">السمة</span>
+                    </label>
+                    <select id="theme-select" class="form-select">
+                        <option value="light">
+                            <span class="lang-en">Light</span>
+                            <span class="lang-ar">فاتح</span>
+                        </option>
+                        <option value="dark">
+                            <span class="lang-en">Dark</span>
+                            <span class="lang-ar">داكن</span>
+                        </option>
+                        <option value="system">
+                            <span class="lang-en">System Default</span>
+                            <span class="lang-ar">افتراضي النظام</span>
+                        </option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Notifications</span>
+                    <span class="lang-ar">الإشعارات</span>
+                </h2>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="notifications-enabled" class="form-check-input">
+                        <label for="notifications-enabled" class="form-check-label">
+                            <span class="lang-en">Enable Notifications</span>
+                            <span class="lang-ar">تمكين الإشعارات</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-en">Morning Reminder Time</span>
+                        <span class="lang-ar">وقت تذكير الصباح</span>
+                    </label>
+                    <input type="time" id="morning-time" class="form-input" value="07:00">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="lang-en">Evening Reminder Time</span>
+                        <span class="lang-ar">وقت تذكير المساء</span>
+                    </label>
+                    <input type="time" id="evening-time" class="form-input" value="17:00">
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <h2 class="section-title">
+                    <span class="lang-en">Audio Settings</span>
+                    <span class="lang-ar">إعدادات الصوت</span>
+                </h2>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="auto-play-audio" class="form-check-input">
+                        <label for="auto-play-audio" class="form-check-label">
+                            <span class="lang-en">Auto-play Audio</span>
+                            <span class="lang-ar">تشغيل الصوت تلقائيًا</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="haptic-feedback" class="form-check-input" checked>
+                        <label for="haptic-feedback" class="form-check-label">
+                            <span class="lang-en">Haptic Feedback</span>
+                            <span class="lang-ar">تغذية راجعة لمسية</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">
+                    <span class="lang-en">Share Wirdak</span>
+                    <span class="lang-ar">مشاركة وردك</span>
+                </h2>
+                
+                <p>
+                    <span class="lang-en">Help others build consistent dhikr habits by sharing Wirdak.</span>
+                    <span class="lang-ar">ساعد الآخرين على بناء عادات ذكر متسقة من خلال مشاركة وردك.</span>
+                </p>
+                
+                <div class="share-buttons">
+                    <button class="btn btn-outline" data-share="whatsapp">
+                        <span class="lang-en">WhatsApp</span>
+                        <span class="lang-ar">واتساب</span>
+                    </button>
+                    <button class="btn btn-outline" data-share="telegram">
+                        <span class="lang-en">Telegram</span>
+                        <span class="lang-ar">تلغرام</span>
+                    </button>
+                    <button class="btn btn-outline" data-share="twitter">
+                        <span class="lang-en">Twitter</span>
+                        <span class="lang-ar">تويتر</span>
+                    </button>
+                    <button class="btn btn-outline" data-share="facebook">
+                        <span class="lang-en">Facebook</span>
+                        <span class="lang-ar">فيسبوك</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="copyright">
+                <span class="lang-en">Wirdak - Islamic Dhikr Habit Tracker</span>
+                <span class="lang-ar">وردك - متتبع عادات الذكر الإسلامي</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal Templates -->
+    <div id="modal-container" class="modal-container hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Modal Title</h2>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost modal-cancel">Cancel</button>
+                <button class="btn btn-primary modal-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/storage.js"></script>
+    <script src="/js/adhkar-data.js"></script>
+    <script src="/js/export-import.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/counter-animation.js"></script>
+    <script src="/js/quran-tracker.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/social-share.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
