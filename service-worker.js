@@ -5,27 +5,27 @@
 
 const CACHE_NAME = 'wirdak-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/main.css',
-  '/css/themes.css',
-  '/css/arabic.css',
-  '/css/animations.css',
-  '/js/app.js',
-  '/js/storage.js',
-  '/js/export-import.js',
-  '/js/notifications.js',
-  '/js/adhkar-data.js',
-  '/js/quran-tracker.js',
-  '/js/search.js',
-  '/js/counter-animation.js',
-  '/js/social-share.js',
-  '/lang/ar.json',
-  '/lang/en.json',
-  '/data/hisn-al-muslim.json',
-  '/assets/icons/icon-192x192.png',
-  '/assets/icons/icon-512x512.png'
+  './',
+  'index.html',
+  'manifest.json',
+  'css/main.css',
+  'css/themes.css',
+  'css/arabic.css',
+  'css/animations.css',
+  'js/app.js',
+  'js/storage.js',
+  'js/export-import.js',
+  'js/notifications.js',
+  'js/adhkar-data.js',
+  'js/quran-tracker.js',
+  'js/search.js',
+  'js/counter-animation.js',
+  'js/social-share.js',
+  'lang/ar.json',
+  'lang/en.json',
+  'data/hisn-al-muslim.json',
+  'assets/icons/icon-192x192.png',
+  'assets/icons/icon-512x512.png'
 ];
 
 // Install event - cache assets
@@ -109,11 +109,11 @@ self.addEventListener('push', (event) => {
     
     const options = {
       body: data.body,
-      icon: '/assets/icons/icon-192x192.png',
-      badge: '/assets/icons/badge-96x96.png',
+      icon: 'assets/icons/icon-192x192.png',
+      badge: 'assets/icons/badge-96x96.png',
       vibrate: [100, 50, 100],
       data: {
-        url: data.url || '/'
+        url: data.url || './'
       }
     };
     
